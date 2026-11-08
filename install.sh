@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# agy-plan / pi-plan: Installer for macOS & Linux
+# proceed: Installer for macOS & Linux
 # Terminal-native Markdown plan reviewer & approver for Herdr, agy & Pi.
 # ==============================================================================
 
@@ -12,7 +12,7 @@ HERDR_CONF="$HOME/.config/herdr/config.toml"
 GEMINI_HOOKS_DIR="$HOME/.gemini/config/hooks"
 GEMINI_HOOKS_CONF="$HOME/.gemini/config/hooks.json"
 
-echo -e "\033[1;36m==> Instalando agy-plan / pi-plan (Terminal Plan Reviewer)...\033[0m"
+echo -e "\033[1;36m==> Instalando proceed (Terminal Plan Reviewer & Approver)...\033[0m"
 
 # 1. Verificar / Instalar glow
 if ! command -v glow >/dev/null 2>&1; then
@@ -31,30 +31,30 @@ mkdir -p "$BIN_DEST"
 mkdir -p "$HOME/.config/herdr"
 mkdir -p "$GEMINI_HOOKS_DIR"
 
-# 3. Instalar binario agy-plan
-echo -e "\033[34m-> Instalando $BIN_DEST/agy-plan...\033[0m"
-if [ -f "$SCRIPT_DIR/bin/agy-plan" ]; then
-    cp "$SCRIPT_DIR/bin/agy-plan" "$BIN_DEST/agy-plan"
+# 3. Instalar binario principal proceed
+echo -e "\033[34m-> Instalando $BIN_DEST/proceed...\033[0m"
+if [ -f "$SCRIPT_DIR/bin/proceed" ]; then
+    cp "$SCRIPT_DIR/bin/proceed" "$BIN_DEST/proceed"
 else
-    # Fallback si se ejecuta vía curl directo desde GitHub
-    REPO_URL="${AGY_PLAN_REPO_URL:-https://raw.githubusercontent.com/eugeniourueta/agy-plan/main}"
-    echo -e "\033[33m-> Descargando agy-plan desde repositorio...\033[0m"
-    curl -fsSL "$REPO_URL/bin/agy-plan" -o "$BIN_DEST/agy-plan"
+    REPO_URL="${PROCEED_REPO_URL:-https://raw.githubusercontent.com/eugeniourueta/proceed/main}"
+    echo -e "\033[33m-> Descargando proceed desde repositorio...\033[0m"
+    curl -fsSL "$REPO_URL/bin/proceed" -o "$BIN_DEST/proceed"
 fi
-chmod +x "$BIN_DEST/agy-plan"
-echo -e "\033[32m✓ $BIN_DEST/agy-plan instalado con éxito.\033[0m"
+chmod +x "$BIN_DEST/proceed"
+echo -e "\033[32m✓ $BIN_DEST/proceed instalado con éxito.\033[0m"
 
-# 4. Crear symlink pi-plan
-ln -sf "$BIN_DEST/agy-plan" "$BIN_DEST/pi-plan"
-chmod +x "$BIN_DEST/pi-plan"
-echo -e "\033[32m✓ $BIN_DEST/pi-plan symlink creado.\033[0m"
+# 4. Crear symlinks compatibles (agy-plan y pi-plan)
+ln -sf "$BIN_DEST/proceed" "$BIN_DEST/agy-plan"
+ln -sf "$BIN_DEST/proceed" "$BIN_DEST/pi-plan"
+chmod +x "$BIN_DEST/agy-plan" "$BIN_DEST/pi-plan"
+echo -e "\033[32m✓ Symlinks agy-plan y pi-plan vinculados a proceed.\033[0m"
 
 # 5. Instalar hook de Antigravity (on-plan-created.py)
 echo -e "\033[34m-> Configurando hook de notificación...\033[0m"
 if [ -f "$SCRIPT_DIR/hooks/on-plan-created.py" ]; then
     cp "$SCRIPT_DIR/hooks/on-plan-created.py" "$GEMINI_HOOKS_DIR/on-plan-created.py"
 else
-    REPO_URL="${AGY_PLAN_REPO_URL:-https://raw.githubusercontent.com/eugeniourueta/agy-plan/main}"
+    REPO_URL="${PROCEED_REPO_URL:-https://raw.githubusercontent.com/eugeniourueta/proceed/main}"
     curl -fsSL "$REPO_URL/hooks/on-plan-created.py" -o "$GEMINI_HOOKS_DIR/on-plan-created.py"
 fi
 chmod +x "$GEMINI_HOOKS_DIR/on-plan-created.py"
@@ -63,14 +63,16 @@ echo -e "\033[32m✓ Hook $GEMINI_HOOKS_DIR/on-plan-created.py instalado.\033[0m
 # 6. Registrar keybinding en Herdr (~/.config/herdr/config.toml)
 echo -e "\033[34m-> Configurando atajo prefix+p en Herdr...\033[0m"
 touch "$HERDR_CONF"
-if ! grep -q "command = \"agy-plan\"" "$HERDR_CONF" && ! grep -q "command = 'agy-plan'" "$HERDR_CONF"; then
+if ! grep -q "command = \"proceed\"" "$HERDR_CONF" && ! grep -q "command = 'proceed'" "$HERDR_CONF"; then
+    # Limpiar entradas antiguas si existían
+    sed -i '' '/command = "agy-plan"/d' "$HERDR_CONF" 2>/dev/null || sed -i '/command = "agy-plan"/d' "$HERDR_CONF" 2>/dev/null || true
     cat << 'EOF' >> "$HERDR_CONF"
 
-# Custom commands: agy-plan modal popup
+# Custom commands: proceed modal popup
 [[keys.command]]
 key = "prefix+p"
 type = "popup"
-command = "agy-plan"
+command = "proceed"
 width = "85%"
 height = "85%"
 EOF
@@ -126,5 +128,5 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     echo -e "    export PATH=\"\$HOME/.local/bin:\$PATH\""
 fi
 
-echo -e "\n\033[1;32m🎉 ¡Instalación completada con éxito!\033[0m"
-echo -e "Puedes abrirlo en cualquier momento pulsando \033[1mCtrl+b p\033[0m en Herdr o ejecutando \033[1magy-plan\033[0m / \033[1mpi-plan\033[0m.\n"
+echo -e "\n\033[1;32m🎉 ¡Instalación de proceed completada con éxito!\033[0m"
+echo -e "Puedes abrirlo en cualquier momento pulsando \033[1mCtrl+b p\033[0m en Herdr o ejecutando \033[1mproceed\033[0m.\n"

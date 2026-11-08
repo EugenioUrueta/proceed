@@ -1,22 +1,22 @@
-# agy-plan / pi-plan 📋⚡
+# proceed ⚡📋
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-brightgreen.svg)](https://www.python.org/)
 [![Terminal: Herdr](https://img.shields.io/badge/terminal-Herdr%20%2B%20Kitty-blueviolet.svg)](https://github.com/eugeniourueta/herdr)
 [![Renderer: Glow](https://img.shields.io/badge/markdown-Glow-ff69b4.svg)](https://github.com/charmbracelet/glow)
 
-> **Terminal-native Markdown plan reviewer & approver for coding agents ([Antigravity](https://github.com) & [Pi](https://github.com/earendil-works/pi)) inside [Herdr](https://github.com) multiplexer.**
+> **Terminal-native Markdown plan reviewer & approver for AI coding agents ([Antigravity](https://github.com) & [Pi](https://github.com/earendil-works/pi)) inside [Herdr](https://github.com) multiplexer.**
 
 Inspect, review, and approve agent implementation plans without leaving your terminal or switching to VS Code.
 
 ---
 
-## 💡 Why agy-plan?
+## 💡 Why `proceed`?
 
-When working inside a terminal multiplexer like **Herdr** with coding agents:
-1. The agent stops and asks for feedback or approval on an implementation plan (`plan_*.md` or `walkthrough.md`).
+When working inside a terminal multiplexer like **Herdr** with autonomous coding agents:
+1. The agent pauses to ask for human approval on an implementation plan (`plan_*.md` or `walkthrough.md`).
 2. Usually, you have to leave your terminal, open VS Code or a browser, find the hidden artifact directory, read it, and return to the terminal to type `Proceed`.
-3. **agy-plan** fixes this: press **`Ctrl+b p`**, and an integrated **85% x 85% modal popup** appears with your formatted Markdown in full **Glow** color. Press **`a`** to approve (`Proceed`), **`f`** to send feedback, or **`Esc`** to dismiss instantly without performing any actions.
+3. **`proceed`** solves this: press **`Ctrl+b p`** (or run `proceed` in terminal), and an integrated **85% x 85% modal popup** appears with your formatted Markdown in full **Glow** color. Press **`a`** to approve (`Proceed`), **`f`** to send feedback, or **`Esc`** to dismiss instantly without performing any actions.
 
 ---
 
@@ -53,14 +53,14 @@ When working inside a terminal multiplexer like **Herdr** with coding agents:
 Clone the repository and run the installer:
 
 ```bash
-git clone https://github.com/eugeniourueta/agy-plan.git ~/agy-plan
-cd ~/agy-plan
+git clone https://github.com/eugeniourueta/proceed.git ~/proceed
+cd ~/proceed
 ./install.sh
 ```
 
 ### What `install.sh` Does Automatically:
 1. Checks and installs [`glow`](https://github.com/charmbracelet/glow) via Homebrew if needed.
-2. Installs `~/.local/bin/agy-plan` and symlink `~/.local/bin/pi-plan`.
+2. Installs `~/.local/bin/proceed` (plus backwards-compatible symlinks `agy-plan` and `pi-plan`).
 3. Installs the Antigravity lifecycle hook in `~/.gemini/config/hooks/on-plan-created.py`.
 4. Registers the Herdr popup keybinding (`prefix + p`) in `~/.config/herdr/config.toml`.
 5. Reloads the Herdr configuration live (`herdr server reload-config`).
@@ -103,28 +103,29 @@ cd ~/agy-plan
 
 ## 🛠️ CLI Usage
 
-You can also run `agy-plan` or `pi-plan` directly from your shell:
+You can also run `proceed` directly from your shell:
 
 ```bash
 # Interactive viewer for the active session
-agy-plan
-pi-plan
+proceed
 
 # View a specific markdown file
-agy-plan path/to/document.md
+proceed path/to/document.md
 
 # List all session documents with summaries and timestamps
-agy-plan --list
+proceed --list
 
 # Print only the absolute path to the latest plan
-agy-plan --path
+proceed --path
 
 # Approve directly from terminal (sends 'Proceed' to target agent pane)
-agy-plan --approve
+proceed --approve
 
-# Copy the latest plan to current directory under demand
-agy-plan --copy
+# Copy the latest plan to current directory on demand
+proceed --copy
 ```
+
+*(Aliases `agy-plan` and `pi-plan` are also available).*
 
 ---
 
@@ -135,7 +136,7 @@ flowchart TD
     A["Agent (agy / pi) generates Plan"] --> B["Antigravity Hook / Tool Execution"]
     B --> C["Herdr Notification Toast + Sound"]
     C --> D["User presses prefix + p (Ctrl+b p)"]
-    D --> E["Herdr spawns agy-plan (85% x 85% Modal)"]
+    D --> E["Herdr spawns proceed (85% x 85% Modal)"]
     E --> F["herdr api snapshot identifies active agent"]
     F -->|agy| G["Load artifacts from brain session"]
     F -->|pi| H["Load artifacts from workspace & .plans/"]
@@ -153,7 +154,7 @@ flowchart TD
 - **Operating System**: macOS or Linux
 - **Terminal Multiplexer**: [Herdr](https://github.com)
 - **Markdown Pager**: [Glow](https://github.com/charmbracelet/glow) (`brew install glow`)
-- **Python**: 3.8+ (no third-party dependencies required; uses standard library: `termios`, `tty`, `select`, `json`, `subprocess`)
+- **Python**: 3.8+ (uses standard library: `termios`, `tty`, `select`, `json`, `subprocess`)
 
 ---
 

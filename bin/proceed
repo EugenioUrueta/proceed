@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-agy-plan / pi-plan: Terminal-native Markdown viewer and approver for agy & pi + Herdr + Kitty.
+proceed: Terminal-native Markdown viewer and approver for AI coding agents (agy, pi) in Herdr + Kitty.
 Lists all session markdown artifacts (plans, walkthroughs) in descending order,
 with instant preview, full Glow rendering, single-key Esc/q instant exit,
 and context-aware quick approval/feedback actions.
@@ -560,7 +560,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Revisa y aprueba documentos Markdown (.md) de agy y pi en terminal."
+        description="proceed: Revisa y aprueba documentos Markdown (.md) de agentes de IA (agy, pi) en terminal."
     )
     parser.add_argument("file", nargs="?", help="Ruta opcional a un archivo .md")
     parser.add_argument(

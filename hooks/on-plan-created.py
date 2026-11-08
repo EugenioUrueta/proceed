@@ -41,7 +41,7 @@ def main():
                     [
                         "herdr", "notification", "show",
                         "📋 Plan listo para revisión",
-                        "--body", f"{plan_name} • Presiona prefix+p o ejecuta agy-plan",
+                        "--body", f"{plan_name} • Presiona prefix+p o ejecuta proceed",
                         "--sound", "request",
                     ],
                     capture_output=True,
