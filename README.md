@@ -41,8 +41,13 @@ When working inside a terminal multiplexer like **Herdr** with autonomous coding
   - Exiting a walkthrough automatically closes the modal (no extra menus).
   - Exiting a plan with `Esc`, `q`, or `Enter` closes safely with **zero commands sent**.
   - `Proceed` is only dispatched if you intentionally press **`a`**.
+- 📊 **Interactive Mermaid Diagram Viewer**:
+  - Automatically parses and identifies all Mermaid diagram code blocks (`flowchart`, `sequenceDiagram`, `stateDiagram`, `erDiagram`, etc.).
+  - Shows diagram count badges in document lists and notifications.
+  - Press **`m`** to instantly open a beautiful, dark-themed standalone viewer with zoom controls, code copy, and section navigation.
+  - Zero cloud leakage and 100% offline-ready: inlines local `mermaid.min.js` directly into the generated view.
 - 🔔 **Proactive Notifications**:
-  - Integrated Antigravity hook sounds an alert and displays a Herdr toast whenever a new plan is ready for review.
+  - Integrated Antigravity hook sounds an alert and displays a Herdr toast whenever a new plan is ready for review (with diagram indicators).
 
 ---
 
@@ -80,6 +85,7 @@ cd ~/proceed
 | :--- | :--- |
 | **`1` .. `9`** | Open document #1 to #9 immediately |
 | **`Enter`** | Open the most recent document (`[1]`) |
+| **`m`** | Open Mermaid diagrams of latest document in interactive viewer |
 | **`Esc`** / **`q`** | Close popup modal immediately |
 
 ### Inside Viewer (`glow`):
@@ -94,6 +100,7 @@ cd ~/proceed
 | :--- | :--- |
 | **`a`** | **Approve plan** (Sends `Proceed` directly to agent pane) |
 | **`f`** | **Send feedback** (Prompts for comment and sends to agent) |
+| **`m`** | **View Mermaid diagrams** (Opens interactive viewer in browser) |
 | **`l`** | Return to document list |
 | **`o`** | Open document in `$EDITOR` (e.g. Neovim) |
 | **`c`** | Save a local copy in current workspace directory |
@@ -111,6 +118,10 @@ proceed
 
 # View a specific markdown file
 proceed path/to/document.md
+
+# Open Mermaid diagrams directly in interactive viewer
+proceed -m
+proceed --mermaid path/to/document.md
 
 # List all session documents with summaries and timestamps
 proceed --list

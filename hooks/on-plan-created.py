@@ -37,11 +37,24 @@ def main():
         if os.environ.get("HERDR_ENV") == "1":
             try:
                 plan_name = os.path.basename(path)
+                has_diagrams = False
+                content = args.get("Content", "")
+                if "```mermaid" in content:
+                    has_diagrams = True
+                elif os.path.exists(path):
+                    try:
+                        with open(path, "r", encoding="utf-8", errors="ignore") as pf:
+                            if "```mermaid" in pf.read():
+                                has_diagrams = True
+                    except Exception:
+                        pass
+
+                diag_badge = " (📊 con diagramas)" if has_diagrams else ""
                 subprocess.run(
                     [
                         "herdr", "notification", "show",
                         "📋 Plan listo para revisión",
-                        "--body", f"{plan_name} • Presiona prefix+p o ejecuta proceed",
+                        "--body", f"{plan_name}{diag_badge} • Presiona prefix+p o ejecuta proceed",
                         "--sound", "request",
                     ],
                     capture_output=True,

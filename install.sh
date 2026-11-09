@@ -30,11 +30,14 @@ fi
 mkdir -p "$BIN_DEST"
 mkdir -p "$HOME/.config/herdr"
 mkdir -p "$GEMINI_HOOKS_DIR"
+SHARE_DEST="$HOME/.local/share/proceed"
+mkdir -p "$SHARE_DEST"
 
 # 3. Instalar binario principal proceed
 echo -e "\033[34m-> Instalando $BIN_DEST/proceed...\033[0m"
 if [ -f "$SCRIPT_DIR/bin/proceed" ]; then
-    cp "$SCRIPT_DIR/bin/proceed" "$BIN_DEST/proceed"
+    # Usar symlink para que el desarrollo local se refleje en tiempo real
+    ln -sf "$SCRIPT_DIR/bin/proceed" "$BIN_DEST/proceed"
 else
     REPO_URL="${PROCEED_REPO_URL:-https://raw.githubusercontent.com/eugeniourueta/proceed/main}"
     echo -e "\033[33m-> Descargando proceed desde repositorio...\033[0m"
@@ -48,6 +51,19 @@ ln -sf "$BIN_DEST/proceed" "$BIN_DEST/agy-plan"
 ln -sf "$BIN_DEST/proceed" "$BIN_DEST/pi-plan"
 chmod +x "$BIN_DEST/agy-plan" "$BIN_DEST/pi-plan"
 echo -e "\033[32m✓ Symlinks agy-plan y pi-plan vinculados a proceed.\033[0m"
+
+# 4b. Descargar / Cachear mermaid.min.js para soporte de diagramas offline
+MERMAID_CACHE="$SHARE_DEST/mermaid.min.js"
+if [ ! -f "$MERMAID_CACHE" ]; then
+    echo -e "\033[34m-> Descargando mermaid.min.js para visor de diagramas offline...\033[0m"
+    if curl -fsSL --connect-timeout 5 "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" -o "$MERMAID_CACHE" 2>/dev/null; then
+        echo -e "\033[32m✓ mermaid.min.js descargado en $MERMAID_CACHE (soporte offline activo).\033[0m"
+    else
+        echo -e "\033[33m[!] No se pudo descargar mermaid.min.js en caché local (se usará fallback por CDN).\033[0m"
+    fi
+else
+    echo -e "\033[32m✓ mermaid.min.js ya disponible en caché local ($MERMAID_CACHE).\033[0m"
+fi
 
 # 5. Instalar hook de Antigravity (on-plan-created.py)
 echo -e "\033[34m-> Configurando hook de notificación...\033[0m"
