@@ -1043,50 +1043,72 @@ def send_to_agy(pane_id, text):
 
 
 def view_markdown(file_path):
-    """Renders markdown file with glow or fallback pager, enabling Esc/q exit."""
+    """
+    Renders markdown file using available viewers in priority cascade:
+      1. leaf: Native terminal Mermaid diagrams, interactive TOC, full-text search, mouse scroll.
+      2. glow: Formatted ANSI markdown with injected diagram banner.
+      3. less: Standard fallback pager.
+    Can be overridden via PROCEED_VIEWER environment variable ('leaf', 'glow', 'less').
+    """
+    preferred_viewer = os.environ.get("PROCEED_VIEWER", "").strip().lower()
+
+    leaf_bin = shutil.which("leaf")
     glow_bin = shutil.which("glow")
+
+    # Priority 1: Leaf (if available and not explicitly disabled)
+    if leaf_bin and (not preferred_viewer or preferred_viewer == "leaf"):
+        try:
+            subprocess.run([leaf_bin, file_path])
+            return
+        except Exception:
+            pass
+
+    # Priority 2: Glow (with diagram tip banner and lesskey exit)
+    if glow_bin and (not preferred_viewer or preferred_viewer == "glow"):
+        env = os.environ.copy()
+        env["LESSKEY_CONTENT"] = "#command\n\\e quit\nq quit\nQ quit\n"
+        env["LESS"] = env.get("LESS", "") + " -R -K"
+
+        render_path = file_path
+        tmp_annotated = None
+        diag_count = count_mermaid_diagrams(file_path)
+        if diag_count > 0:
+            try:
+                with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+                    content = f.read()
+
+                plural = "s" if diag_count != 1 else ""
+                banner = (
+                    f"> [!TIP]\n"
+                    f"> 📊 **Este documento contiene {diag_count} diagrama{plural} Mermaid interactivo{plural}**.\n"
+                    f"> Presiona **`q`** o **`Esc`** para salir de este lector y pulsa **`m`** en la terminal para verlos en tu navegador.\n\n"
+                )
+
+                tmp_annotated = os.path.join(
+                    tempfile.gettempdir(),
+                    f"proceed_view_{os.path.basename(file_path)}"
+                )
+                with open(tmp_annotated, "w", encoding="utf-8") as tf:
+                    tf.write(banner + content)
+                render_path = tmp_annotated
+            except Exception:
+                render_path = file_path
+
+        try:
+            subprocess.run([glow_bin, "-p", render_path], env=env)
+            return
+        finally:
+            if tmp_annotated and os.path.exists(tmp_annotated):
+                try:
+                    os.remove(tmp_annotated)
+                except Exception:
+                    pass
+
+    # Priority 3: Fallback pager (less)
     env = os.environ.copy()
-    # Configure lesskey so \e (Escape) and q/Q quit the pager immediately
     env["LESSKEY_CONTENT"] = "#command\n\\e quit\nq quit\nQ quit\n"
     env["LESS"] = env.get("LESS", "") + " -R -K"
-
-    render_path = file_path
-    tmp_annotated = None
-
-    diag_count = count_mermaid_diagrams(file_path)
-    if diag_count > 0 and glow_bin:
-        try:
-            with open(file_path, "r", encoding="utf-8", errors="replace") as f:
-                content = f.read()
-
-            plural = "s" if diag_count != 1 else ""
-            banner = (
-                f"> [!TIP]\n"
-                f"> 📊 **Este documento contiene {diag_count} diagrama{plural} Mermaid interactivo{plural}**.\n"
-                f"> Presiona **`q`** o **`Esc`** para salir de este lector y pulsa **`m`** en la terminal para verlos en tu navegador.\n\n"
-            )
-
-            tmp_annotated = os.path.join(
-                tempfile.gettempdir(),
-                f"proceed_view_{os.path.basename(file_path)}"
-            )
-            with open(tmp_annotated, "w", encoding="utf-8") as tf:
-                tf.write(banner + content)
-            render_path = tmp_annotated
-        except Exception:
-            render_path = file_path
-
-    try:
-        if glow_bin:
-            subprocess.run([glow_bin, "-p", render_path], env=env)
-        else:
-            subprocess.run(["less", "-R", render_path], env=env)
-    finally:
-        if tmp_annotated and os.path.exists(tmp_annotated):
-            try:
-                os.remove(tmp_annotated)
-            except Exception:
-                pass
+    subprocess.run(["less", "-R", file_path], env=env)
 
 
 def main():
@@ -1111,8 +1133,14 @@ def main():
     parser.add_argument(
         "-m", "--mermaid", action="store_true", help="Extrae y visualiza los diagramas Mermaid en el navegador"
     )
+    parser.add_argument(
+        "--viewer", choices=["leaf", "glow", "less"], help="Fuerza el visor de Markdown (leaf, glow, less)"
+    )
 
     args = parser.parse_args()
+
+    if args.viewer:
+        os.environ["PROCEED_VIEWER"] = args.viewer
 
     artifacts, meta = resolve_session_artifacts(args.file)
     pane_id = meta.get("pane_id")

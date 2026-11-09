@@ -14,16 +14,25 @@ GEMINI_HOOKS_CONF="$HOME/.gemini/config/hooks.json"
 
 echo -e "\033[1;36m==> Instalando proceed (Terminal Plan Reviewer & Approver)...\033[0m"
 
-# 1. Verificar / Instalar glow
-if ! command -v glow >/dev/null 2>&1; then
+# 1. Verificar / Instalar visor de Markdown (leaf o glow)
+if ! command -v leaf >/dev/null 2>&1; then
+    if command -v brew >/dev/null 2>&1; then
+        echo -e "\033[33m-> Instalando 'leaf-markdown-viewer' (renderizado nativo de diagramas Mermaid y TOC)...\033[0m"
+        brew install leaf-markdown-viewer || true
+    fi
+fi
+
+if command -v leaf >/dev/null 2>&1; then
+    echo -e "\033[32m✓ leaf (leaf-markdown-viewer) está disponible.\033[0m"
+elif command -v glow >/dev/null 2>&1; then
+    echo -e "\033[32m✓ glow está disponible como visor alternativo.\033[0m"
+else
     if command -v brew >/dev/null 2>&1; then
         echo -e "\033[33m-> Instalando 'glow' mediante Homebrew...\033[0m"
-        brew install glow
+        brew install glow || true
     else
-        echo -e "\033[33m[!] 'glow' no encontrado. Por favor instálalo (ej. brew install glow).\033[0m"
+        echo -e "\033[33m[!] Ni 'leaf' ni 'glow' encontrados. Instala uno de ellos para visualización óptima (ej. brew install leaf-markdown-viewer).\033[0m"
     fi
-else
-    echo -e "\033[32m✓ glow ya se encuentra instalado.\033[0m"
 fi
 
 # 2. Crear directorios base

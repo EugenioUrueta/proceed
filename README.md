@@ -23,7 +23,9 @@ When working inside a terminal multiplexer like **Herdr** with autonomous coding
 ## ✨ Features
 
 - 🖥️ **Herdr Modal Popup**: Bound to `prefix + p` (`Ctrl+b p`), spawning an instantaneous popup over your active agent pane.
-- 🎨 **Rich Glow Markdown Rendering**: Headers, tables, diffs, code blocks, and checklists styled in full ANSI terminal colors.
+- 🍃 **Intelligent Viewer Cascade (`Leaf` + `Glow`)**:
+  - **Leaf (Primary)**: Renders Mermaid diagrams directly in terminal as Unicode/ASCII schemas, provides an interactive Table of Contents (TOC) sidebar, and supports full-text search (`/`).
+  - **Glow (Fallback)**: Rich ANSI styling with headers, tables, diffs, and checklists.
 - ⚡ **Instant Raw-Mode Keystrokes**:
   - **`Esc` / `q`**: Exits the list or viewer instantly (no `Enter` required).
   - **`1` - `9`**: Opens any listed document in one keystroke.
@@ -164,7 +166,7 @@ flowchart TD
 
 - **Operating System**: macOS or Linux
 - **Terminal Multiplexer**: [Herdr](https://github.com)
-- **Markdown Pager**: [Glow](https://github.com/charmbracelet/glow) (`brew install glow`)
+- **Markdown Renderers**: [Leaf](https://leaf.rivolink.mg) (`brew install leaf-markdown-viewer`, recommended for native diagrams & TOC) or [Glow](https://github.com/charmbracelet/glow) (`brew install glow`)
 - **Python**: 3.8+ (uses standard library: `termios`, `tty`, `select`, `json`, `subprocess`)
 
 ---

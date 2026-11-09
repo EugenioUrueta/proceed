@@ -70,8 +70,8 @@ proceed/
    - Rastrea artefactos `.md` y lee metadatos `.metadata.json` para extraer resúmenes (`summary`) y banderas de retroalimentación (`requestFeedback`).
    - Extrae bloques ` ```mermaid ` con sus encabezados de contexto y genera visores HTML interactivos con tema oscuro Vesper y controles (zoom, copia de código, navegación).
    - Inyecta `mermaid.min.js` en línea desde `~/.local/share/proceed/mermaid.min.js` para funcionamiento 100% offline y privado.
-   - Invoca `glow` con configuración de entorno de `lesskey` (`LESSKEY_CONTENT`) para permitir salida instantánea con la tecla `Escape` o `q`.
-   - Modos no interactivos soportados: `--list`, `--path`, `--approve`, `--copy`, `--mermaid` (`-m`).
+   - Invoca el visor en cascada inteligente: prioridad `leaf` (diagramas Mermaid Unicode nativos en terminal, TOC y búsqueda interactiva), fallback a `glow` (con banner de advertencia y `lesskey`), o `less`.
+   - Modos no interactivos soportados: `--list`, `--path`, `--approve`, `--copy`, `--mermaid` (`-m`), `--viewer`.
 
 2. **`hooks/on-plan-created.py`**:
    - Gancho de integración ejecutado tras `write_file` o `edit_file` en Antigravity.
